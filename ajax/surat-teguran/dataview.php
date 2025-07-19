@@ -1,0 +1,81 @@
+<?php
+
+require_once("inc/init.php");
+require_once("list_sql.php");
+require_once("../../lib/user_controller.php");
+require_once("../../helpers/date_helper.php");
+
+//instantiate objects
+$uc = new user_controller($db);
+
+$uc->check_access();
+
+//	$npwrd = trim($_POST['npwrd']);
+$thn_retribusi = $_POST['tahun_retribusi'];
+$fn = $_POST['fn'];
+$men_id = $_POST['men_id'];
+$mengetahui = $_POST['mengetahui'];
+$no_skrd1 = $_POST['no_skrd1'];
+$no_surat = base64_encode($_POST['no_surat']);
+$kd_rekening = $_POST['kd_rekening'];
+$perihal = $_POST['perihal'];
+
+$readAccess = $uc->check_priviledge('read', $men_id);
+
+//	$list_sql .= " WHERE (a.npwrd='".$npwrd."') AND (a.thn_retribusi='".$thn_retribusi."')";	
+//	$list_sql .= " ORDER BY a.no_skrd ASC";
+
+// $list_sql .= " WHERE a.no_skrd between '".$no_skrd1."' and '".$no_skrd2."' AND (a.thn_retribusi='".$thn_retribusi."') AND (a.kd_rekening='".$kd_rekening."') ";
+$list_sql .= " WHERE a.no_skrd='" . $no_skrd1 . "' AND (a.thn_retribusi='" . $thn_retribusi . "') AND (a.kd_rekening='" . $kd_rekening . "') ";
+$list_sql .= " ORDER BY a.no_skrd ASC";
+
+$list_of_data = $db->Execute($list_sql);
+if (!$list_of_data)
+	print $db->ErrorMsg();
+?>
+<!-- NEW WIDGET START -->
+<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+	<!-- Widget ID (each widget will need unique ID)-->
+	<div class="jarviswidget jarviswidget-color-blueDark" id="wid-id-3" data-widget-editbutton="false">
+		<!-- widget options:
+		usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+
+		data-widget-colorbutton="false"
+		data-widget-editbutton="false"
+		data-widget-togglebutton="false"
+		data-widget-deletebutton="false"
+		data-widget-fullscreenbutton="false"
+		data-widget-custombutton="false"
+		data-widget-collapsed="true"
+		data-widget-sortable="false"
+
+		-->
+		<header>
+			<span class="widget-icon"> <i class="fa fa-table"></i> </span>
+			<h2>Daftar Retribusi WR</h2>
+		</header>
+
+		<!-- widget div-->
+		<div>
+
+			<!-- widget edit box -->
+			<div class="jarviswidget-editbox">
+				<!-- This area used as dropdown edit box -->
+			</div>
+			<!-- end widget edit box -->
+
+			<!-- widget content -->
+			<div class="widget-body no-padding" id="list-of-data">
+				<?php include_once "list_of_data.php"; ?>
+			</div>
+			<!-- end widget content -->
+
+		</div>
+		<!-- end widget div -->
+
+	</div>
+	<!-- end widget -->
+
+</article>
+<!-- WIDGET END -->

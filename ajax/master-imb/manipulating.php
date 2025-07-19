@@ -1,0 +1,115 @@
+<?php	
+	require_once("inc/init.php");
+	require_once("list_sql.php");
+	require_once("../../lib/DML.php");
+	require_once("../../lib/global_obj.php");
+	require_once("../../lib/user_controller.php");
+	require_once("../../helpers/date_helper.php");
+
+	//instantiate objects
+    $uc = new user_controller($db);
+	$DML = new DML('app_reg_wr',$db);
+	$DML2 = new DML('app_reg_wr_imb2017',$db);
+	$global = new global_obj($db);	
+
+	$uc->check_access();
+
+	$act = $_POST['act'];
+	$fn = $_POST['fn'];
+	$men_id = $_POST['men_id'];
+    $id2 = $_POST['id2'];	
+
+	$arr_data=array();
+
+	if($act=='add' || $act=='edit')
+	{
+				
+		$tipe_wr = $_POST['tipe_wr'];
+		$noreg = $_POST['no_registrasi'];		
+	//	$arr_field = array('no_registrasi','nm_wp_wr','alamat_wp_wr','kelurahan','kecamatan',
+			$arr_field = array('nm_wp_wr','alamat_wp_wr','kelurahan','kecamatan',
+							'kota','kd_pos','no_tlp','tgl_form_diterima','tgl_batas_kirim','tgl_pendaftaran','kd_rekening','tipe_retribusi');
+
+		foreach($_POST as $key => $val)
+		{
+			if(in_array($key,$arr_field))
+			{				
+			//	if($key=='no_registrasi')
+			//		$arr_data[$key] = $val;
+				//$arr_data[$key] = date('Y').$val;
+			//	else 
+					if($key=='nm_wp_wr')
+				{
+					if($tipe_wr=='2')
+					{						
+						$x = explode('_',$val);
+						$val = $x[1];
+					}
+					
+					$arr_data[$key] = $global->real_escape_string($val);
+				}
+				else if($key=='tgl_form_diterima' || $key=='tgl_batas_kirim' || $key=='tgl_pendaftaran')
+					$arr_data[$key] = us_date_format($val);
+				else
+					$arr_data[$key]=$global->real_escape_string($val);
+			}
+		}
+	}
+
+	if($act=='add'|| $act=='edit')
+	{
+
+		$arr_data['npwrd'] = 'R.'."".$_POST['id_jenis_retribusi']."".$_POST['npwrd'];
+		$arr_data['no_registrasi'] = $_POST['id_jenis_retribusi']."".$_POST['no_registrasi'];
+		$arr_data['tipe_wr'] = $tipe_wr;		
+
+		$result = $DML->save($arr_data);
+		
+		if(!$result)
+			die('failed');
+$sql_no="update app_no_npwrd set npwrd='".$_POST['npwrd']."' where id_npwrd='1'";
+$up=$db->Execute($sql_no);
+
+$sql_noreg="update app_no_registrasi set no_registrasi='$noreg' where id_reg='1'";
+$up2=$db->Execute($sql_noreg);
+
+		$npwrd_= 'R.'."".$_POST['id_jenis_retribusi']."".$_POST['npwrd'];
+		$no_registrasi_= $_POST['id_jenis_retribusi']."".$_POST['no_registrasi'];
+		
+$sql_update_imb="update app_reg_wr_imb2017 set npwrd='$npwrd_',no_registrasi='$no_registrasi_' where id='$id2'";
+$sql_update_imb_=$db->Execute($sql_update_imb);
+
+	}
+	else if($act=='edit')
+	{		
+		$id=$_POST['id'];
+		$arr_data['tipe_wr'] = $tipe_wr;		
+
+		$cond = "npwrd='".$id."'";
+		$result = $DML->update($arr_data,$cond);		
+		
+		if(!$result)
+			die('failed');		
+	}
+	else if($act=='delete')
+	{
+		$id=$_POST['id2'];
+		$cond = "id='".$id."'";
+		$result = $DML2->delete($cond);
+		
+		if(!$result)
+			die('failed');		
+	}	    
+
+	$readAccess = $uc->check_priviledge('read',$men_id);
+    $editAccess = $uc->check_priviledge('edit',$men_id);
+    $deleteAccess = $uc->check_priviledge('delete',$men_id);
+
+    //fetching data to generate list of data
+    $list_of_data = $db->Execute($list_sql);
+    if (!$list_of_data)
+        print $db->ErrorMsg();
+	
+	
+	include_once "list_of_data.php";
+?>
