@@ -1,36 +1,36 @@
 <?php
 
-	require_once("inc/init.php"); 	
-	require_once("list_sql.php");
-	require_once("../../lib/user_controller.php");
-	require_once("../../helpers/date_helper.php");
-	
-	//instantiate objects
-    $uc = new user_controller($db);
+require_once("inc/init.php");
+require_once("list_sql.php");
+require_once("../../lib/user_controller.php");
+require_once("../../helpers/date_helper.php");
 
-    $uc->check_access();
+//instantiate objects
+$uc = new user_controller($db);
+
+$uc->check_access();
 
 //	$npwrd = trim($_POST['npwrd']);
-	$thn_retribusi = $_POST['tahun_retribusi'];
-	$fn = $_POST['fn'];
-	$men_id = $_POST['men_id'];
-	$mengetahui = $_POST['mengetahui'];
+$thn_retribusi = $_POST['tahun_retribusi'];
+$fn = $_POST['fn'];
+$men_id = $_POST['men_id'];
+$mengetahui = $_POST['mengetahui'];
 $no_skrd1 = $_POST['no_skrd1'];
 $no_skrd2 = $_POST['no_skrd2'];
 $kd_rekening = $_POST['kd_rekening'];
 
-	$readAccess = $uc->check_priviledge('read',$men_id);
-	
+$readAccess = $uc->check_priviledge('read', $men_id);
+
 //	$list_sql .= " WHERE (a.npwrd='".$npwrd."') AND (a.thn_retribusi='".$thn_retribusi."')";	
 //	$list_sql .= " ORDER BY a.no_skrd ASC";
 
-$list_sql .= " WHERE a.no_skrd between '".$no_skrd1."' and '".$no_skrd2."' AND (a.thn_retribusi='".$thn_retribusi."') AND (a.kd_rekening='".$kd_rekening."') ";
-	$list_sql .= " ORDER BY a.no_skrd ASC";
-		
-	
-	$list_of_data = $db->Execute($list_sql);
-    if (!$list_of_data)
-        print $db->ErrorMsg();
+$list_sql .= " WHERE a.no_skrd between '" . $no_skrd1 . "' and '" . $no_skrd2 . "' AND (a.thn_retribusi='" . $thn_retribusi . "') AND (a.kd_rekening='" . $kd_rekening . "') ";
+$list_sql .= " ORDER BY a.no_skrd ASC";
+
+
+$list_of_data = $db->Execute($list_sql);
+if (!$list_of_data)
+	print $db->ErrorMsg();
 ?>
 <!-- NEW WIDGET START -->
 <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -52,7 +52,7 @@ $list_sql .= " WHERE a.no_skrd between '".$no_skrd1."' and '".$no_skrd2."' AND (
 		-->
 		<header>
 			<span class="widget-icon"> <i class="fa fa-table"></i> </span>
-			<h2>Daftar Retribusi WR</h2>			
+			<h2>Daftar Retribusi WR</h2>
 		</header>
 
 		<!-- widget div-->
@@ -60,7 +60,7 @@ $list_sql .= " WHERE a.no_skrd between '".$no_skrd1."' and '".$no_skrd2."' AND (
 
 			<!-- widget edit box -->
 			<div class="jarviswidget-editbox">
-				<!-- This area used as dropdown edit box -->						
+				<!-- This area used as dropdown edit box -->
 			</div>
 			<!-- end widget edit box -->
 
