@@ -175,10 +175,10 @@ if ($n_skrd > 0) {
 							<td>Kode Billing</td>
 							<td>: <?php echo $row1['kd_billing']; ?></td>
 						</tr>
-						<tr>
+						<!-- <tr>
 							<td>Tgl Jatuh Tempo</td>
 							<td>: <?php echo indo_date_format($tgl_jatuh_tempo, 'longDate'); ?></td>
-						</tr>
+						</tr> -->
 					</table>
 				</td>
 			</tr>
