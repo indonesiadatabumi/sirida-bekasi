@@ -11,9 +11,17 @@ $DML = new DML('app_ref_jenis_retribusi', $db);
 $fn = $_CONTENT_FOLDER_NAME[39];
 
 // $act = $_GET['act'];
-// $fn = $_GET['fn'];
+$fn = $_GET['fn'];
 // $men_id = $_GET['men_id'];
 ?>
+<!-- MODAL PLACE HOLDER -->
+<div class="modal fade" id="remoteModal" tabindex="-1" role="dialog" aria-labelledby="remoteModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg ">
+		<div class="modal-content">
+		</div>
+	</div>
+</div>
+<!-- END MODAL -->
 
 <form action="ajax/rekam-strd/insert_data.php" method="post" class="form-horizontal">
 	<input type="hidden" name="id_skrd" id="id_skrd">
@@ -23,7 +31,7 @@ $fn = $_CONTENT_FOLDER_NAME[39];
 
 				<label class="control-label col-md-2" for="bulan_realisasi">Realisasi</label>
 				<div class="col-md-6">
-					<select class="form-control" name="bulan_realisasi">
+					<select class="form-control" name="bulan_realisasi" id="bulan_realisasi">
 						<option value="" selected disabled>-- Pilih Bulan Realisasi --</option>
 						<option value="01">Januari</option>
 						<option value="02">Februari</option>
@@ -40,7 +48,7 @@ $fn = $_CONTENT_FOLDER_NAME[39];
 					</select>
 				</div>
 				<div class="col-md-4">
-					<select class="form-control" name="tahun_realisasi">
+					<select class="form-control" name="tahun_realisasi" id="tahun_realisasi">
 						<option value="" selected disabled>-- Pilih Tahun Realisasi --</option>
 						<option value="2025">2025</option>
 						<option value="2024">2024</option>
@@ -63,7 +71,7 @@ $fn = $_CONTENT_FOLDER_NAME[39];
 				</div>
 
 				<div class="col-md-2">
-					<button type="button" class="btn btn-default" onclick="get_calon_strd()"><i class="fa fa-search"></i></button>
+					<button type="button" class="btn btn-default" onclick="pop_up_strd()"><i class="fa fa-search"></i></button>
 				</div>
 
 			</div>
@@ -138,7 +146,7 @@ $fn = $_CONTENT_FOLDER_NAME[39];
 			</div>
 		</div>
 
-		<div class="col-sm-6">
+		<div class=" col-sm-6">
 			<div class="form-group">
 
 				<label class="control-label col-md-2" for="prepend">Nama WR</label>
@@ -342,7 +350,11 @@ $fn = $_CONTENT_FOLDER_NAME[39];
 	</div>
 </form>
 
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 <script>
 	$('#no_skrd').on('keydown', function(event) {
@@ -373,9 +385,14 @@ $fn = $_CONTENT_FOLDER_NAME[39];
 		});
 	}
 
-	function get_calon_strd() {
+	function pilihSKRD(id_skrd) {
+		get_calon_strd(id_skrd); // Panggil AJAX
+		$('#remoteModal').modal('hide'); // Tutup modal
+	}
+
+	function get_calon_strd(id_skrd = '') {
 		const jenis_retribusi = $('#jenis_retribusi').val();
-		const periode = $('#periode').val();
+		const tahun_realisasi = $('#tahun_realisasi').val();
 		const no_skrd = $('#no_skrd').val();
 		let data_response = ''
 		$.ajax({
@@ -383,8 +400,9 @@ $fn = $_CONTENT_FOLDER_NAME[39];
 			url: "ajax/rekam-strd/get_calon_strd.php",
 			data: {
 				'jenis_retribusi': jenis_retribusi,
-				'periode': periode,
-				'no_skrd': no_skrd
+				'tahun_realisasi': tahun_realisasi,
+				'no_skrd': no_skrd,
+				'id_skrd': id_skrd
 			},
 			dataType: "json",
 			success: function(response) {
@@ -393,6 +411,7 @@ $fn = $_CONTENT_FOLDER_NAME[39];
 
 					$('#id_skrd').val(data_response.id_skrd);
 					$('#npwrd').val(data_response.npwrd);
+					$('#no_skrd').val(data_response.no_skrd);
 					$('#wp_wr_nama').val(data_response.wp_wr_nama);
 					$('#wp_wr_alamat').val(data_response.wp_wr_alamat);
 					$('#bln_retribusi').val(data_response.bln_retribusi);
@@ -407,6 +426,47 @@ $fn = $_CONTENT_FOLDER_NAME[39];
 				} else {
 					alert(response.response_message)
 				}
+			}
+		});
+	}
+
+	function pop_up_strd() {
+		const jenis_retribusi = $('#jenis_retribusi').val();
+		const bulan_realisasi = $('#bulan_realisasi').val();
+		const tahun_realisasi = $('#tahun_realisasi').val();
+
+		// Cek validasi jika perlu
+		if (!jenis_retribusi || !bulan_realisasi || !tahun_realisasi) {
+			alert('Lengkapi semua input sebelum menampilkan data!');
+			return;
+		}
+
+		// Tampilkan loading atau kosongkan konten dulu
+		$('#remoteModal .modal-content').html('<div class="text-center p-5"><i class="fa fa-spinner fa-spin fa-2x"></i><br>Loading...</div>');
+
+		// Buka modal duluan
+		$('#remoteModal').modal('show');
+
+		// Panggil AJAX untuk isi modal
+		$.ajax({
+			type: "POST",
+			url: "ajax/rekam-strd/modal_content.php",
+			data: {
+				'jenis_retribusi': jenis_retribusi,
+				'bulan_realisasi': bulan_realisasi,
+				'tahun_realisasi': tahun_realisasi
+			},
+			success: function(html) {
+				// Langsung render konten HTML ke modal
+				$('#remoteModal .modal-content').html(html);
+				$('#data_strd').DataTable({
+					"pageLength": 10,
+					"lengthChange": false,
+					"ordering": false
+				});
+			},
+			error: function(xhr, status, error) {
+				$('#remoteModal .modal-content').html('<div class="text-danger p-4">Gagal memuat data: ' + error + '</div>');
 			}
 		});
 	}

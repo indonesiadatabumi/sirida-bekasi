@@ -3,10 +3,16 @@ require_once("inc/init.php");
 require_once("function.php");
 
 $jenis_retribusi = $_POST['jenis_retribusi'];
-$periode = $_POST['periode'];
+$tahun_realisasi = $_POST['tahun_realisasi'];
 $no_skrd = $_POST['no_skrd'];
+$id_skrd = $_POST['id_skrd'];
 
-$sql = "SELECT a.*, b.total_retribusi FROM app_skrd a LEFT JOIN app_nota_perhitungan b ON a.id_skrd=b.fk_skrd WHERE a.kd_rekening='$jenis_retribusi' AND a.thn_retribusi='$periode' AND a.no_skrd='$no_skrd'";
+if (!empty($id_skrd)) {
+    $sql = "SELECT a.*, b.total_retribusi FROM app_skrd a LEFT JOIN app_nota_perhitungan b ON a.id_skrd=b.fk_skrd WHERE a.id_skrd='$id_skrd'";
+} else {
+    $sql = "SELECT a.*, b.total_retribusi FROM app_skrd a LEFT JOIN app_nota_perhitungan b ON a.id_skrd=b.fk_skrd WHERE a.kd_rekening='$jenis_retribusi' AND a.thn_retribusi='$tahun_realisasi' AND a.no_skrd='$no_skrd'";
+}
+
 $result1 = $db->Execute($sql);
 $data = $result1->fields;
 
@@ -20,6 +26,7 @@ if ($data === false || $data === null) {
     $tgl_jatuh_tempo = date('Y-m-d', strtotime($tgl_penetapan . ' +30 days'));
     $kode_billing = $data['kd_billing'];
     $id_skrd = $data['id_skrd'];
+    $no_skrd = $data['no_skrd'];
     $npwrd = $data['npwrd'];
     $wp_wr_nama = $data['wp_wr_nama'];
     $wp_wr_alamat = $data['wp_wr_alamat'] . " Kel. " . $data['wp_wr_lurah'] . " Kec. " . $data['wp_wr_camat'] . " " . $data['wp_wr_kabupaten'];
@@ -38,6 +45,7 @@ if ($data === false || $data === null) {
         $data_response = [
             'id_skrd' => $id_skrd,
             'npwrd' => $npwrd,
+            'no_skrd' => $no_skrd,
             'wp_wr_nama' => $wp_wr_nama,
             'wp_wr_alamat' => $wp_wr_alamat,
             'bln_retribusi' => $bln_retribusi,
@@ -70,6 +78,7 @@ if ($data === false || $data === null) {
             $data_response = [
                 'id_skrd' => $id_skrd,
                 'npwrd' => $npwrd,
+                'no_skrd' => $no_skrd,
                 'wp_wr_nama' => $wp_wr_nama,
                 'wp_wr_alamat' => $wp_wr_alamat,
                 'bln_retribusi' => $bln_retribusi,
