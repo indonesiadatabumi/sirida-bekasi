@@ -11,7 +11,7 @@ $DML = new DML('app_ref_jenis_retribusi', $db);
 $fn = $_CONTENT_FOLDER_NAME[39];
 
 // $act = $_GET['act'];
-$fn = $_GET['fn'];
+// $fn = $_GET['fn'];
 // $men_id = $_GET['men_id'];
 ?>
 <!-- MODAL PLACE HOLDER -->
