@@ -19,7 +19,7 @@ $data = $result1->fields;
 // tampil data
 echo '
 <div class="modal-header">
-	<h4 class="modal-title">Daftar WR SKRD</h4>
+	<h4 class="modal-title">Daftar WR STRD</h4>
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
 					&times;
 				</button>
@@ -41,17 +41,17 @@ echo '
 		<tbody>';
 $no = 1;
 while (!$result1->EOF) {
-    $row = $result1->fields;
+	$row = $result1->fields;
 
-    $npwrd = $row['npwrd'];
-    $nama_wr = $row['wp_wr_nama'];
-    $no_skrd = $row['no_skrd'];
-    $tgl_penetapan = date('d-m-Y', strtotime($row['tgl_penetapan']));
-    $tgl_jatuh_tempo = date('d-m-Y', strtotime($row['tgl_jatuh_tempo']));
-    $tgl_pembayaran = date('d-m-Y', strtotime($row['tgl_pembayaran']));
-    $id_skrd = $row['id_skrd']; // atau sesuaikan primary key-nya
+	$npwrd = $row['npwrd'];
+	$nama_wr = $row['wp_wr_nama'];
+	$no_skrd = $row['no_skrd'];
+	$tgl_penetapan = date('d-m-Y', strtotime($row['tgl_penetapan']));
+	$tgl_jatuh_tempo = date('d-m-Y', strtotime($row['tgl_jatuh_tempo']));
+	$tgl_pembayaran = date('d-m-Y', strtotime($row['tgl_pembayaran']));
+	$id_skrd = $row['id_skrd']; // atau sesuaikan primary key-nya
 
-    echo "<tr>
+	echo "<tr>
 		<td>{$no}</td>
 		<td>{$npwrd}</td>
 		<td>{$nama_wr}</td>
@@ -62,8 +62,8 @@ while (!$result1->EOF) {
 		<td><button type='button' onclick='pilihSKRD(\"{$id_skrd}\")' ><i class='fa fa-check'></i></button></td>
 	</tr>";
 
-    $no++;
-    $result1->MoveNext();
+	$no++;
+	$result1->MoveNext();
 }
 
 echo '</tbody></table></div>';
