@@ -124,8 +124,8 @@ $total_retribusi = $db->getOne($sql);
 												<td align='center'>" . $kd_billing . "</td>
 												<td align='center'>" . $no_skrd . "</td>
 												<td>" . $nm_wp_wr . "</td>
-												<td>" . $rrn . "</td>
 												<td>" . $jenis_retribusi . "</td>
+												<td>" . $rrn . "</td>
 												<td align='center'>" . $waktu_pembayaran . "</td>
 												<td align='right'>" . number_format($total_retribusi) . "</td>
 												<td align='right'>" . number_format($total_bayar) . "</td>
