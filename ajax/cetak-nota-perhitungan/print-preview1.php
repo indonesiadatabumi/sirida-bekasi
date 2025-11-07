@@ -202,7 +202,7 @@ $sql_pejda2 = "SELECT * FROM v_pejabat_daerah where pejda_id='".$id_pejda2."'";
       </table><br />
       <table width="100%">
         <tr>
-        <td align="center">Mengetahui,<br />
+        <td align="left">Mengetahui,<br />
           a.n Kepala Badan Pendapatan Daerah<br />
           Kepala Bidang Pendapatan Daerah<br />
           <br />
@@ -213,7 +213,7 @@ $sql_pejda2 = "SELECT * FROM v_pejabat_daerah where pejda_id='".$id_pejda2."'";
         <u><?=$row_pejda1['pejda_nama'];?></u><br />
         <?=$row_pejda1['ref_pangpej_ket'];?><br />
         NIP. <?=$row_pejda1['pejda_nip'];?>
-        </td>
+      <!-- </td>
         <td align="center">Diperiksa Oleh,<br />
           Analis Keuangan Pusat dan Daerah<br />
           Ahli Muda<br />
@@ -225,7 +225,7 @@ $sql_pejda2 = "SELECT * FROM v_pejabat_daerah where pejda_id='".$id_pejda2."'";
         <u><?=$row_pejda2['pejda_nama'];?></u><br />
         <?=$row_pejda2['ref_pangpej_ket'];?><br />
         NIP. <?=$row_pejda2['pejda_nip'];?>
-        </td>
+        </td>  -->
         <td>
           <?php echo $system_params[6].", ".indo_date_format($row['tgl_penetapan'],'longDate');?><br /><br />
           <table width="100%" border=0>

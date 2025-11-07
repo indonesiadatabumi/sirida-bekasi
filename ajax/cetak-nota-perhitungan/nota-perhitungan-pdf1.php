@@ -155,13 +155,9 @@ $sql_pejda2 = "SELECT * FROM v_pejabat_daerah where pejda_id='".$id_pejda2."'";
         			<u>".$row_pejda1['pejda_nama']."</u><br />
         			".$row_pejda1['ref_pangpej_ket']."<br />
         			NIP. ".$row_pejda1['pejda_nip']."</td>
-        			<td align=;center;>Diperiksa Oleh,<br />
-          			Analis Keuangan Pusat dan Daerah<br />
-          			Ahli Muda<br />
-          			<br /><br /><br /><br /><br />
-        			<u>".$row_pejda2['pejda_nama']."</u><br />
-        			".$row_pejda2['ref_pangpej_ket']."<br />
-        			NIP. ".$row_pejda2['pejda_nip']."</td><td>
+
+        		
+					<td>
           			".$system_params[6].", ".indo_date_format($row['tgl_penetapan'],'longDate')."<br /><br />
           			<table width='100%' border=0>
             		<tr><td>Nama</td><td> : ".$_SESSION['fullname']."</td>

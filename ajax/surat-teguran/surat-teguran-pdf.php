@@ -91,13 +91,22 @@ if ($n_skrd > 0) {
                END) as total_denda
                FROM app_nota_perhitungan as a WHERE(a.fk_skrd='" . $id_skrd . "') ;";
 
-
+		
 		$row2 = $db->getRow($sql);
 		$ketetapan_retribusi = $row2['ketetapan_retribusi'];
 		$total_kenaikan = $row2['total_kenaikan'];
 		$total_bunga = $row2['total_bunga'];
 		$total_denda = $row2['total_denda'];
 		$total_retribusi = $row2['total_retribusi'];
+		if ($row1['kd_rekening'] == '41203011') {
+			$sql = "SELECT total_retribusi FROM app_nota_perhitungan WHERE(fk_skrd='" . $id_skrd . "')";
+			$row2 = $db->getRow($sql);
+			$ketetapan_retribusi = 0;
+			$total_retribusi = $row2['total_retribusi'];
+			$total_kenaikan = 0;
+			$total_bunga = 0;
+			$total_denda = 0;
+		}
 	} else {
 		$sql = "SELECT nilai_total_perforasi,total_retribusi FROM app_permohonan_karcis WHERE(fk_skrd='" . $id_skrd . "')";
 		$row2 = $db->getRow($sql);
@@ -107,7 +116,6 @@ if ($n_skrd > 0) {
 		$total_bunga = 0;
 		$total_denda = 0;
 	}
-
 	$system_params = $global->get_system_params();
 
 
@@ -154,7 +162,7 @@ if ($n_skrd > 0) {
 					<td colspan="2" style="padding:10px;" valign="top">
 						<table border="0" cellpadding="2" cellspacing="0" width="100%" style="font-size: 12px;">
 						<tr>
-							<td>Nomor </td><td width="80%">: ' . base64_decode($nosurat) . '</td>
+							<td>Nomor </td><td width="80%">: ' . base64_decode($nosurat) . '/Bapenda.Wasdalpenda</td>
 						</tr>
 						<tr>
 							<td>Sifat </td><td>: Segera</td>
@@ -182,8 +190,8 @@ if ($n_skrd > 0) {
 				<tr>
 					<td colspan="3" style="padding-left:90px; text-align: justify;" valign="top">
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						Berkenaan Peraturan Daerah Kota Bekasi Nomor 04 Tahun 2017 tentang Penyelenggaraan dan Retribusi Izin Mendirikan Bangunan (IMB) dan 
-						catatan pembukuan pada Badan Pendapatan Daerah Kota Bekasi, dengan ini disampaikan hal sebagai berikut:
+						Berdasarkan Peraturan Daerah Kota Bekasi Nomor 01 Tahun 2024 tentang Pajak Daerah dan Retribusi Daerah
+						serta menurut catatan pembukuan pada Badan Pendapatan Daerah Kota Bekasi, dengan ini disampaikan hal sebagai berikut:
 						<br /><br />
 						<table width="100%" border=0>
 						<tr>
@@ -226,8 +234,8 @@ if ($n_skrd > 0) {
 					<td rowspan="4">
 						&nbsp;
 					</td>
-					<td width="20%"></td>
-					<td width="50%" align="left">
+					<td width="25%"></td>
+					<td width="30%" align="left">
 						' . $row_pejda1['ref_japeda_nama'] . '
 					</td>
 				</tr>
@@ -237,7 +245,7 @@ if ($n_skrd > 0) {
 				<tr>
 					<td></td>
 					<td align="left">
-						<u>' . $row_pejda1['pejda_nama'] . '</u> <br />
+						' . $row_pejda1['pejda_nama'] . '</u> <br />
 						' . $row_pejda1['ref_pangpej_ket'] . ' <br />
 						NIP. ' . $row_pejda1['pejda_nip'] . '
 					</td>
@@ -249,9 +257,11 @@ if ($n_skrd > 0) {
 					<td colspan="3" style="font-size: 11px;">
 						Tembusan:
 						<div>
-							1. Plt. Inspektur Daerah Kota Bekasi; <br />
-							2. Asisten Administrasi Umum dan Perekonomian Setda Kota Bekasi; <br />
-							3. Kepala Badan Pengelolaan Keuangan dan Aset Daerah Kota Bekasi.
+							1. Wali Kota Bekasi <br />
+							2. Wakil Wali Kota Bekasi <br />
+							3. Kepala Kejaksaan RI Kota Bekasi <br />
+							4. Sekretaris Daerah Kota Bekasi <br />
+							5. Inspektur Kota Bekasi.
 						</div>
 					</td>
 			</tr>
