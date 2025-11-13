@@ -32,8 +32,9 @@ elseif ($tipe_retribusi == '2') {
 
 	//$list_sql = "SELECT a.nm_rekening,a.kd_rekening,a.masa_awal,a.tahun_pajak,a.ntp,a.kode_billing,a.sptpd_yg_dibayar,b.* FROM payment.pembayaran_sptpd as a 
 	//				LEFT JOIN (SELECT kd_billing,no_skrd,wp_wr_nama,wp_wr_camat,kd_rekening FROM app_skrd) as b ON (a.kode_billing=b.kd_billing) ";
-	$list_sql = "SELECT a.nm_rekening,a.kd_rekening,a.bln_retribusi,a.thn_retribusi,a.ntpd,a.total_bayar,a.tgl_pembayaran,b.* FROM app_pembayaran_retribusi as a 
-				LEFT JOIN (SELECT kd_billing,no_skrd,npwrd,wp_wr_nama,wp_wr_alamat,wp_wr_camat,kd_rekening FROM app_skrd) as b ON (a.kd_billing=b.kd_billing) ";
+	$list_sql = "SELECT a.nm_rekening,a.kd_rekening,a.bln_retribusi,a.thn_retribusi,a.ntpd,a.total_bayar,a.tgl_pembayaran,b.*, c.rrn FROM app_pembayaran_retribusi as a 
+				LEFT JOIN (SELECT kd_billing,no_skrd,npwrd,wp_wr_nama,wp_wr_alamat,wp_wr_camat,kd_rekening FROM app_skrd) as b ON (a.kd_billing=b.kd_billing) 
+				LEFT JOIN log_payment_qris as c ON (a.kd_billing=c.kode_billing)";
 
 	//$list_sql = "SELECT a.nm_rekening,a.kd_rekening,a.bln_retribusi,a.thn_retribusi,a.ntpd,a.total_bayar,b.* FROM app_pembayaran_retribusi as a 
 	//			INNER JOIN (SELECT x.kd_billing,x.no_skrd,x.wp_wr_nama FROM app_skrd as x WHERE(x.kd_rekening='".$kd_rekening."' and x.wp_wr_camat='".$kecamatan."')) as b ON (a.kd_billing=b.kd_billing)";
@@ -120,6 +121,9 @@ $jenis_retribusi = $db->getOne($sql);
 				foreach ($row as $key => $val) {
 					$key = strtolower($key);
 					$$key = $val;
+				}
+				if (!isset($rrn)) {
+					$rrn = '';
 				}
 
 				$no++;
