@@ -39,7 +39,7 @@ if ($act == 'edit') {
 
 $i = 0;
 
-if ($kd_rekening == '4120107') {
+if ($kd_rekening == '4120107' || $kd_rekening == '4120204') {
 	$sql_golongan = "SELECT id_golongan, nm_golongan, tarif_dasar FROM app_ref_golongan_ret_sampah";
 	$result_golongan = $db->Execute($sql_golongan);
 	if (!$result_golongan)
@@ -75,7 +75,8 @@ foreach ($valuation1_rows as $row) {
 
 	echo "</div>
 								</div>";
-	echo "
+	if ($kd_rekening == '4120107'  || $kd_rekening == '4120204') {
+		echo "
 					<div id='row-" . $i . "' class='valuation1-row' style='margin:10px;'>
 						<div class='row' style='margin:10px;'>
 							<div class='col col-md-8'>
@@ -85,14 +86,15 @@ foreach ($valuation1_rows as $row) {
 									</div>
 									<div class='col col-md-5 '>
 										<select class='form-control' onchange=\"set_tarif_dasar('" . $i . "', this.value);\"><option value=''>Pilih Jenis Golongan</option>";
-	while ($golongan = $result_golongan->FetchRow()) {
-		echo "<option value='" . $golongan['tarif_dasar'] . "'>" . $golongan['nm_golongan'] . "</option>";
-	}
-	echo "</select>
+		while ($golongan = $result_golongan->FetchRow()) {
+			echo "<option value='" . $golongan['tarif_dasar'] . "'>" . $golongan['nm_golongan'] . "</option>";
+		}
+		echo "</select>
 									</div>";
 
-	echo "</div>
+		echo "</div>
 								</div>";
+	}
 	// echo "</br><section><div class='row'><label class='label col col-4'>Golongan</label><div class='col-8 ml-3'><select class='form-control'><option value=''>Pilih Jenis Golongan</option>";
 	// while ($golongan = $result_golongan->FetchRow()) {
 	// 	echo "<option value='" . $golongan['tarif_dasar'] . "'>" . $golongan['nm_golongan'] . "</option>";
