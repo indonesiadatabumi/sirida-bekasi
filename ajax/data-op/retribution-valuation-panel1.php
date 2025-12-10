@@ -1,70 +1,105 @@
 <?php
-	$display = 'none';
-	
-	if($kd_rekening!='')
-	{
-		$display = ($kd_rekening!=$korek_imb?'block':'none');
-	}	
-	
-	echo "
-	<div class='row' id='retribution-valuation-panel1' style='display:".$display."'>
+$display = 'none';
+
+if ($kd_rekening != '') {
+	$display = ($kd_rekening != $korek_imb ? 'block' : 'none');
+}
+
+echo "
+	<div class='row' id='retribution-valuation-panel1' style='display:" . $display . "'>
 		<div class='col col-md-12'>
 			<section id='valuation1-body'>";
-				
-				$valuation1_rows = array(array('id_rincian_nota'=>'','header'=>'0','uraian'=>'','volume'=>'','tarif'=>'','ketetapan'=>'','kenaikan'=>'','denda'=>'','bunga'=>'','total'=>''));
-				$grand = 0;
 
-				if($act=='edit')
-				{
-					$valuation1_rows = array();
-					$sql = "SELECT * FROM app_rincian_nota_perhitungan WHERE(fk_nota='".$curr_data['id_nota']."')";
-					$result = $db->Execute($sql);
-					if(!$result)
-						echo $db->ErrorMsg();
+$valuation1_rows = array(array('id_rincian_nota' => '', 'header' => '0', 'uraian' => '', 'volume' => '', 'tarif' => '', 'ketetapan' => '', 'kenaikan' => '', 'denda' => '', 'bunga' => '', 'total' => ''));
+$grand = 0;
 
-					while($row = $result->FetchRow())
-					{
-						$valuation1_rows[] = array('id_rincian_nota'=>$row['id_rincian_nota'],'header'=>$row['header'],'uraian'=>$row['uraian'],'volume'=>$row['volume'],'tarif'=>number_format($row['tarif']),'ketetapan'=>number_format($row['ketetapan']),
-												  'kenaikan'=>number_format($row['kenaikan']),'denda'=>number_format($row['denda']),'bunga'=>number_format($row['bunga']),
-												  'total'=>number_format($row['total']));
-						$grand += $row['total'];
-					}
-				}
+if ($act == 'edit') {
+	$valuation1_rows = array();
+	$sql = "SELECT * FROM app_rincian_nota_perhitungan WHERE(fk_nota='" . $curr_data['id_nota'] . "')";
+	$result = $db->Execute($sql);
+	if (!$result)
+		echo $db->ErrorMsg();
 
-				$i = 0;
+	while ($row = $result->FetchRow()) {
+		$valuation1_rows[] = array(
+			'id_rincian_nota' => $row['id_rincian_nota'],
+			'header' => $row['header'],
+			'uraian' => $row['uraian'],
+			'volume' => $row['volume'],
+			'tarif' => number_format($row['tarif']),
+			'ketetapan' => number_format($row['ketetapan']),
+			'kenaikan' => number_format($row['kenaikan']),
+			'denda' => number_format($row['denda']),
+			'bunga' => number_format($row['bunga']),
+			'total' => number_format($row['total'])
+		);
+		$grand += $row['total'];
+	}
+}
 
-				foreach($valuation1_rows as $row)
-				{
-					$i++;
-					echo "
-					<div id='row-".$i."' class='valuation1-row'>
+$i = 0;
+
+if ($kd_rekening == '4120107') {
+	$sql_golongan = "SELECT id_golongan, nm_golongan, tarif_dasar FROM app_ref_golongan_ret_sampah";
+	$result_golongan = $db->Execute($sql_golongan);
+	if (!$result_golongan)
+		echo ($db->ErrorMsg());
+}
+
+foreach ($valuation1_rows as $row) {
+	$i++;
+	echo "
+					<div id='row-" . $i . "' class='valuation1-row'>
 						<hr style='margin-bottom:10px;'></hr>
 						<div class='row'>
 							<div class='col col-md-12'>
 								<div class='row'>
-									<div class='col col-md-1'>#".$i."</div>
+									<div class='col col-md-1'>#" . $i . "</div>
 									<div class='col col-md-2'>
-										<input type='hidden' name='id_rincian_nota1".$i."' id='id_rincian_nota1".$i."' value='".$row['id_rincian_nota']."'/>
-										<input type='checkbox' name='check_header".$i."' id='check_header".$i."' onchange=\"control_header_retribution(this,'".$i."');\" value='".$i."' ".($row['header']=='1'?'checked':'')."/> Header<br />
+										<input type='hidden' name='id_rincian_nota1" . $i . "' id='id_rincian_nota1" . $i . "' value='" . $row['id_rincian_nota'] . "'/>
+										<input type='checkbox' name='check_header" . $i . "' id='check_header" . $i . "' onchange=\"control_header_retribution(this,'" . $i . "');\" value='" . $i . "' " . ($row['header'] == '1' ? 'checked' : '') . "/> Header<br />
 										Parent
-										<select name='parent".$i."' id='parent.".$i."'>";
-											for($j=0;$j<$i;$j++)
-											{
-												echo "<option value='".$j."'>".$j."&nbsp;&nbsp;</option>";
-											}
-										echo "</select>
+										<select name='parent" . $i . "' id='parent." . $i . "'>";
+	for ($j = 0; $j < $i; $j++) {
+		echo "<option value='" . $j . "'>" . $j . "&nbsp;&nbsp;</option>";
+	}
+	echo "</select>
 									</div>
 									<div class='col col-md-8'>
-										<textarea name='uraian".$i."' id='uraian".$i."' rows='2' class='form-control' placeholder='Uraian' required>".$row['uraian']."</textarea>
+										<textarea name='uraian" . $i . "' id='uraian" . $i . "' rows='2' class='form-control' placeholder='Uraian' required>" . $row['uraian'] . "</textarea>
 									</div>
 									<div class='col col-md-1'>";
-										if($i>1)
-										{
-											echo "<button type='button' id='panel1_delete_row".$i."' class='btn btn-default btn-xs' onclick=\"delete_row_panel1('".$i."');\"><i class='fa fa-trash-o'></i></button>";
-										}
-									echo "</div>
-								</div><br />
-								<div class='row'>									
+	if ($i > 1) {
+		echo "<button type='button' id='panel1_delete_row" . $i . "' class='btn btn-default btn-xs' onclick=\"delete_row_panel1('" . $i . "');\"><i class='fa fa-trash-o'></i></button>";
+	}
+
+	echo "</div>
+								</div>";
+	echo "
+					<div id='row-" . $i . "' class='valuation1-row' style='margin:10px;'>
+						<div class='row' style='margin:10px;'>
+							<div class='col col-md-8'>
+								<div class='row'>
+									<div class='col col-md-3'>
+										<label class='label col col-3'>Jenis Golongan</label>
+									</div>
+									<div class='col col-md-5 '>
+										<select class='form-control' onchange=\"set_tarif_dasar('" . $i . "', this.value);\"><option value=''>Pilih Jenis Golongan</option>";
+	while ($golongan = $result_golongan->FetchRow()) {
+		echo "<option value='" . $golongan['tarif_dasar'] . "'>" . $golongan['nm_golongan'] . "</option>";
+	}
+	echo "</select>
+									</div>";
+
+	echo "</div>
+								</div>";
+	// echo "</br><section><div class='row'><label class='label col col-4'>Golongan</label><div class='col-8 ml-3'><select class='form-control'><option value=''>Pilih Jenis Golongan</option>";
+	// while ($golongan = $result_golongan->FetchRow()) {
+	// 	echo "<option value='" . $golongan['tarif_dasar'] . "'>" . $golongan['nm_golongan'] . "</option>";
+	// }
+	// echo "</select></div></div></section>";
+	echo "<br />
+								<div class='row' style='margin-top:10px;'>									
 									<div class='col col-md-12'>
 										<table class='table table-striped'>
 											<thead>
@@ -80,16 +115,16 @@
 											</thead>
 											<tbody>
 												<tr>";
-													$disabled = ($row['header']=='1'?'disabled':'');
-													$autofill = ($row['header']=='1'?'':'autofill-bg');
-													echo "
-													<td><input type='text' name='volume".$i."' class='thousand_format2' id='volume".$i."' onkeyup=\"mix_panel1_function1('".$i."');\" style='width:100%;text-align:right;' value='".($row['header']=='1'?'':$row['volume'])."' ".$disabled." required/></td>
-													<td><input type='text' name='tarif".$i."' class='thousand_format1' id='tarif".$i."' onkeyup=\"mix_panel1_function1('".$i."');\" style='width:100%;text-align:right;' value='".($row['header']=='1'?'':$row['tarif'])."' ".$disabled." required/></td>
-													<td><input type='text' name='ketetapan".$i."' class='".$autofill."' id='ketetapan".$i."' style='width:100%;text-align:right;' value='".($row['header']=='1'?'':$row['ketetapan'])."' readonly ".$disabled."/></td>
-													<td><input type='text' name='kenaikan".$i."' class='thousand_format1' onkeyup=\"mix_panel1_function2('".$i."');\" id='kenaikan".$i."' style='width:100%;text-align:right;' value='".($row['header']=='1'?'':$row['kenaikan'])."' ".$disabled."/></td>
-													<td><input type='text' name='denda".$i."' class='thousand_format1' onkeyup=\"mix_panel1_function2('".$i."');\" id='denda".$i."' style='width:100%;text-align:right;' value='".($row['header']=='1'?'':$row['denda'])."' ".$disabled."/></td>
-													<td><input type='text' name='bunga".$i."' class='thousand_format1' onkeyup=\"mix_panel1_function2('".$i."');\" id='bunga".$i."' style='width:100%;text-align:right;' value='".($row['header']=='1'?'':$row['bunga'])."' ".$disabled."/></td>
-													<td><input type='text' name='total".$i."' class='".$autofill."' id='total".$i."' style='width:100%;text-align:right;' value='".($row['header']=='1'?'':$row['total'])."' readonly ".$disabled."/></td>
+	$disabled = ($row['header'] == '1' ? 'disabled' : '');
+	$autofill = ($row['header'] == '1' ? '' : 'autofill-bg');
+	echo "
+													<td><input type='text' name='volume" . $i . "' class='thousand_format2' id='volume" . $i . "' onkeyup=\"mix_panel1_function1('" . $i . "');\" style='width:100%;text-align:right;' value='" . ($row['header'] == '1' ? '' : $row['volume']) . "' " . $disabled . " required/></td>
+													<td><input type='text' name='tarif" . $i . "' class='thousand_format1' id='tarif" . $i . "' onkeyup=\"mix_panel1_function1('" . $i . "');\" style='width:100%;text-align:right;' value='" . ($row['header'] == '1' ? '' : $row['tarif']) . "' " . $disabled . " required/></td>
+													<td><input type='text' name='ketetapan" . $i . "' class='" . $autofill . "' id='ketetapan" . $i . "' style='width:100%;text-align:right;' value='" . ($row['header'] == '1' ? '' : $row['ketetapan']) . "' readonly " . $disabled . "/></td>
+													<td><input type='text' name='kenaikan" . $i . "' class='thousand_format1' onkeyup=\"mix_panel1_function2('" . $i . "');\" id='kenaikan" . $i . "' style='width:100%;text-align:right;' value='" . ($row['header'] == '1' ? '' : $row['kenaikan']) . "' " . $disabled . "/></td>
+													<td><input type='text' name='denda" . $i . "' class='thousand_format1' onkeyup=\"mix_panel1_function2('" . $i . "');\" id='denda" . $i . "' style='width:100%;text-align:right;' value='" . ($row['header'] == '1' ? '' : $row['denda']) . "' " . $disabled . "/></td>
+													<td><input type='text' name='bunga" . $i . "' class='thousand_format1' onkeyup=\"mix_panel1_function2('" . $i . "');\" id='bunga" . $i . "' style='width:100%;text-align:right;' value='" . ($row['header'] == '1' ? '' : $row['bunga']) . "' " . $disabled . "/></td>
+													<td><input type='text' name='total" . $i . "' class='" . $autofill . "' id='total" . $i . "' style='width:100%;text-align:right;' value='" . ($row['header'] == '1' ? '' : $row['total']) . "' readonly " . $disabled . "/></td>
 												</tr>
 											</tbody>
 										</table>
@@ -98,10 +133,10 @@
 							</div>
 						</div>
 					</div>";
-				}
+}
 
-			echo "</section>
-			<input type='hidden' id='n_valuation_row1' name='n_valuation_row1' value='".$i."'/>
+echo "</section>
+			<input type='hidden' id='n_valuation_row1' name='n_valuation_row1' value='" . $i . "'/>
 			<div class='row'>
 				<div class='col col-md-8'>
 					<a href='javascript:;' onclick=\"add_valuation_table_row1();\"><i class='fa fa-plus'></i> Tambah Baris</a>
@@ -110,11 +145,10 @@
 					<table cellspacing='2' width='100%'>
 					<tr>
 					<td><b>GRAND TOTAL</b></td>
-					<td><input type='text' name='total_perhitungan_nr' id='total_perhitungan_nr' class='autofill-bg' value='".number_format($grand)."' style='width:100%;text-align:right;' readonly/></td>
+					<td><input type='text' name='total_perhitungan_nr' id='total_perhitungan_nr' class='autofill-bg' value='" . number_format($grand) . "' style='width:100%;text-align:right;' readonly/></td>
 					</tr>
 					</table>
 				</div>
 			</div>
 		</div>
 	</div>";
-?>
