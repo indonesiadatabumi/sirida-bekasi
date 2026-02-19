@@ -11,13 +11,16 @@ $status_bayar = $_GET['s_byr'];
 
 switch ($status_bayar) {
 	case '2':
-		$skrd_cond = "WHERE(status_bayar='1')";
+		$skrd_cond1 = "WHERE x.status_bayar = '1'";
+		$skrd_cond2 = "WHERE(status_bayar='1')";
 		break;
 	case '3';
-		$skrd_cond = "WHERE(status_bayar='0')";
+		$skrd_cond1 = "WHERE x.status_bayar = '0'";
+		$skrd_cond2 = "WHERE(status_bayar='0')";
 		break;
 	default:
-		$skrd_cond = "";
+		$skrd_cond1 = "";
+		$skrd_cond2 = "";
 		break;
 }
 
@@ -26,11 +29,33 @@ $acc_condition2 = ($kecamatan != '' ? "(wp_wr_camat='" . $kecamatan . "') AND" :
 
 if ($tipe_retribusi == '1') {
 	$list_sql = "SELECT a.bln_retribusi,a.thn_retribusi,a.total_retribusi,b.*, c.rrn 
-					FROM app_nota_perhitungan as a 
-					INNER JOIN (SELECT x.id_skrd,x.no_skrd,to_char(x.tgl_skrd,'DD-MM-YYYY') as tgl_skrd,x.wp_wr_nama,x.wp_wr_alamat,x.wp_wr_camat,x.kd_billing as kode_billing, x.status_ketetapan,y.* FROM app_skrd as x LEFT JOIN (SELECT ntpd,to_char(tgl_pembayaran,'DD-MM-YYYY') as tgl_pembayaran,denda,total_bayar,kd_billing FROM app_pembayaran_retribusi) as y ON (x.kd_billing::text=y.kd_billing::text) ) as b ON (a.fk_skrd=b.id_skrd) 
+				FROM app_nota_perhitungan as a 
+				INNER JOIN (
+					SELECT 
+					x.id_skrd,
+					x.no_skrd,
+					to_char(x.tgl_skrd,'DD-MM-YYYY') as tgl_skrd,
+					x.wp_wr_nama,
+					x.wp_wr_alamat,
+					x.wp_wr_camat,
+					x.kd_billing as kode_billing, 
+					x.status_ketetapan,
+					y.* 
+				FROM app_skrd as x 
+				LEFT JOIN (
+					SELECT 
+					ntpd,
+					to_char(tgl_pembayaran,'DD-MM-YYYY') as tgl_pembayaran,
+					denda,
+					total_bayar,
+					kd_billing 
+				FROM app_pembayaran_retribusi) as y ON (x.kd_billing::text=y.kd_billing::text)
+				" . $skrd_cond1 . ")
+				as b  ON (a.fk_skrd=b.id_skrd) 
 					LEFT JOIN log_payment_qris as c ON (b.kd_billing::text=c.kode_billing::text)
 					 WHERE " . $acc_condition . " " . $acc_condition2 . "(a.bln_retribusi='" . $bln_retribusi . "') AND (a.thn_retribusi='" . $thn_retribusi . "')
-					 AND (b.status_ketetapan='1')";
+					 AND (b.status_ketetapan='1')
+				ORDER BY no_skrd ASC";
 } else {
 	$list_sql = "SELECT 
 					 (SELECT to_char(tgl_pengembalian,'DD-MM-YYYY') as tgl_pengembalian FROM app_pengembalian_karcis as x WHERE(x.fk_permohonan=a.id_permohonan) ORDER BY id_pengembalian ASC LIMIT 1)  as tgl_pengembalian,
@@ -39,11 +64,12 @@ if ($tipe_retribusi == '1') {
 					 INNER JOIN 
 					 	(SELECT x.id_skrd,x.no_skrd,to_char(x.tgl_skrd,'DD-MM-YYYY') as tgl_skrd,x.bln_retribusi,x.thn_retribusi,x.wp_wr_nama,x.wp_wr_alamat,x.wp_wr_camat, x.kd_billing as kode_billing,y.* FROM app_skrd as x 
 					 	 LEFT JOIN (SELECT ntpd,denda,total_bayar,kd_billing FROM app_pembayaran_retribusi) as y ON (x.kd_billing=y.kd_billing)
-					 	 " . $skrd_cond . ") as b 
+					 	 " . $skrd_cond2 . ") as b 
 					ON (a.fk_skrd=b.id_skrd)
 					WHERE " . $acc_condition . " " . $acc_condition2 . "(b.bln_retribusi='" . $bln_retribusi . "') AND (b.thn_retribusi='" . $thn_retribusi . "')";
 }
-// var_dump($list_sql);die;
+// var_dump($list_sql);
+// die;
 $list_of_data = $db->Execute($list_sql);
 
 if (!$list_of_data)
